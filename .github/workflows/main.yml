@@ -47,6 +47,10 @@ jobs:
       - name: Run Next.js build to generate the static files
         run: npm run build
 
+        # Runs the deploy command
+        # Parses the output, and 
+        # retrieves the build log url & the deployed url,
+        # finally stores them into variables: NETLIFY_LOGS_URL & NETLIFY_LIVE_URL
       - name: 🚀Deploy
         id: deploy-netlify
         run: |
@@ -62,20 +66,15 @@ jobs:
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
 
+       # Takes the Logs url and live url from previous job
+       # and creates a comment on commit
       - name: 👓 Netlify Preview URL
         uses: peter-evans/commit-comment@v1
         env:
-            OUTPUT: "Successfully deployed to Netlify.\n\n🔍 Inspect: ${{ steps.deploy-netlify.outputs.NETLIFY_LOGS_URL }}\n✅ Preview: ${{ steps.deploy-netlify.outputs.NETLIFY_LIVE_URL }}"
+            OUTPUT: |
+              ### Successfully deployed to Netlify.
+
+              🔍 Inspect: ${{ steps.deploy-netlify.outputs.NETLIFY_LOGS_URL }}
+              ✅ Preview: ${{ steps.deploy-netlify.outputs.NETLIFY_LIVE_URL }}
         with:
           body: ${{ env.OUTPUT }}
-
-      # # Publish the inspect and preview link to the PR
-      # - name: 👓 Netlify Preview URL
-      #   uses: unsplash/comment-on-pr@master
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     OUTPUT: "This pull request is being automatically deployed to Netlify.\n\n🔍 Inspect: ${{ steps.deploy-netlify.outputs.NETLIFY_LOGS_URL }}\n✅ Preview: ${{ steps.deploy-netlify.outputs.NETLIFY_URL }}"
-      #   with:
-      #     msg: ${{ env.OUTPUT }}
-      #     check_for_duplicate_msg: false
-

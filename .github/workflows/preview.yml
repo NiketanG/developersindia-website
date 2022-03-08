@@ -51,11 +51,18 @@ jobs:
       - name: 🚀 Deploy
         id: deploy-netlify
         run: |
-          COMMAND="netlify deploy --build -m ${{ github.head_ref }} --alias ${{ github.head_ref }}"
+          COMMAND="netlify deploy \
+          --build -m ${{ github.head_ref }} \
+          --alias ${{ github.head_ref }}"
           OUTPUT=$(sh -c "$COMMAND")
 
-          NETLIFY_URL=$(echo "$OUTPUT" | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*(--)[a-zA-Z0-9./?=_-]*') # Unique key: --
-          NETLIFY_LOGS_URL=$(echo "$OUTPUT" | grep -Eo '(http|https)://app.netlify.com/[a-zA-Z0-9./?=_-]*') # Unique key: app.netlify.com
+          NETLIFY_URL=$(echo "$OUTPUT" \
+          | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*(--)[a-zA-Z0-9./?=_-]*')
+          # Unique key: --
+          
+          NETLIFY_LOGS_URL=$(echo "$OUTPUT" \
+          | grep -Eo '(http|https)://app.netlify.com/[a-zA-Z0-9./?=_-]*')
+          # Unique key: app.netlify.com
 
           echo "::set-output name=netlify_preview_url::$NETLIFY_URL"
           echo "::set-output name=netlify_logs_url::$NETLIFY_LOGS_URL"

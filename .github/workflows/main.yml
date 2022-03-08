@@ -57,8 +57,13 @@ jobs:
           COMMAND="netlify deploy --build --prod"
           OUTPUT=$(sh -c "$COMMAND")
 
-          NETLIFY_LOGS_URL=$(echo "$OUTPUT" | grep -Eo '(http|https)://app.netlify.com/[a-zA-Z0-9./?=_-]*') # Unique key: app.netlify.com
-          NETLIFY_LIVE_URL=$(echo "$OUTPUT" | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*' | grep -Ev "netlify.com|(--)") # Unique key: doesn't contain -- and app.netlify.com
+          NETLIFY_LOGS_URL=$(echo "$OUTPUT" \
+          | grep -Eo '(http|https)://app.netlify.com/[a-zA-Z0-9./?=_-]*')
+          # Unique key: app.netlify.com
+          
+          NETLIFY_LIVE_URL=$(echo "$OUTPUT" \
+          | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*' | grep -Ev "netlify.com|(--)")
+          # Unique key: doesn't contain -- and app.netlify.com
 
           echo "::set-output name=netlify_logs_url::$NETLIFY_LOGS_URL"
           echo "::set-output name=netlify_live_url::$NETLIFY_LIVE_URL"
